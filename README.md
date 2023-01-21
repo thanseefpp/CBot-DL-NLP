@@ -2,4 +2,4 @@
 
 ## About
 
-Just Started Working on it
+Sqlite Model Integrated and Using Reddit Dataset collection
