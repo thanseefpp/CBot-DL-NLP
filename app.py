@@ -1,6 +1,6 @@
 import tensorflow as tf
 from model.chatbot_database import create_table,find_parent,find_existing_score,\
-    sql_insert_replace_comment,sql_insert_has_parent,sql_insert_no_parent,end_insertion
+    sql_insert_replace_comment,sql_insert_has_parent,sql_insert_no_parent,remove_parent_null_table_data
 from datetime import datetime
 import json
 
@@ -70,5 +70,5 @@ if __name__ == "__main__":
                 if row_counter % end_row == 0:
                     print("Cleaning Data!")
                     query = "DELETE FROM chat_reply WHERE parent IS NULL"
-                    end_insertion(query)
+                    remove_parent_null_table_data(query)
                     break #end inserting and cleaned the data

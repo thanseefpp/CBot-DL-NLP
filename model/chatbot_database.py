@@ -58,7 +58,7 @@ def transaction_bldr(query):
         connection.commit()
         sql_transaction = []
         
-def end_insertion(query):
+def remove_parent_null_table_data(query):
     try:
         c.execute(query)
         connection.commit()
