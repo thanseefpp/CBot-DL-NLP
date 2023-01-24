@@ -1,4 +1,3 @@
-import tensorflow as tf
 from model.chatbot_database import create_table,find_parent,find_existing_score,\
     sql_insert_replace_comment,sql_insert_has_parent,sql_insert_no_parent,remove_parent_null_table_data
 from datetime import datetime
