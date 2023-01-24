@@ -7,42 +7,41 @@ sql_transaction = []
 connection = sqlite3.connect(f'{current_year_month}.db')
 c = connection.cursor()
 
+
 def create_table():
     c.execute(
-      """
+        """
         CREATE TABLE IF NOT EXISTS chat_reply(
             parent_id CHAR PRIMARY KEY,
             comment_id CHAR UNIQUE,
             parent CHAR,
-            author CHAR,
+            comment CHAR,
             subreddit CHAR,
-            created_utc INT,
+            unix INT,
             score INT
         );
       """
     )
-  
+
 def find_parent(id):
     try:
-        query = f"""SELECT parent FROM chat_reply WHERE parent_id = {id} LIMIT 1"""
-        c.execute(query)
+        sql = "SELECT comment FROM chat_reply WHERE comment_id = '{}' LIMIT 1".format(id)
+        c.execute(sql)
         result = c.fetchone()
         if result != None:
             return result[0]
-        else:
-            return False
+        else: return False
     except Exception as e:
         return False
 
 def find_existing_score(id):
     try:
-        query = f"SELECT score FROM chat_reply WHERE parent_id = {id} LIMIT 1"
-        c.execute(query)
+        sql = "SELECT score FROM chat_reply WHERE parent_id = '{}' LIMIT 1".format(id)
+        c.execute(sql)
         result = c.fetchone()
         if result != None:
             return result[0]
-        else:
-            return False
+        else: return False
     except Exception as e:
         return False
     
@@ -54,30 +53,37 @@ def transaction_bldr(query):
         for s in sql_transaction:
             try:
                 c.execute(s)
-                # print(s)
             except:
                 pass
         connection.commit()
         sql_transaction = []
+        
+def end_insertion(query):
+    try:
+        c.execute(query)
+        connection.commit()
+        c.execute("VACUUM")
+        connection.commit()
+    except Exception as e:
+        return False
     
-def sql_insert_replace_comment(parent_id,comment_id,author,parent_data,subreddit,created_utc,score):
+def sql_insert_replace_comment(commentid,parentid,parent,comment,subreddit,time,score):
     try:
-        query = f"""UPDATE chat_reply SET parent_id = {parent_id}, comment_id = {comment_id}, parent = {parent_data}, author = {author}, subreddit = {subreddit}, created_utc = {created_utc}, score = {score}"""
-        transaction_bldr(query)
+        sql = """UPDATE chat_reply SET parent_id = ?, comment_id = ?, parent = ?, comment = ?, subreddit = ?, unix = ?, score = ? WHERE parent_id =?;""".format(parentid, commentid, parent, comment, subreddit, int(time), score, parentid)
+        transaction_bldr(sql)
     except Exception as e:
-        print("query update error",e)
+        print('s0 insertion',str(e))
 
-def sql_insert_has_parent(parent_id,comment_id,parent,author,subreddit,created_utc,score):
+def sql_insert_has_parent(commentid,parentid,parent,comment,subreddit,time,score):
     try:
-        query = f'''INSERT INTO chat_reply(parent_id, comment_id, parent, author, subreddit, created_utc, score) VALUES ("{parent_id}","{comment_id}","{parent}","{author}","{subreddit}",{created_utc},{score});'''
-        transaction_bldr(query)
-        print(query)
+        sql = """INSERT INTO chat_reply (parent_id, comment_id, parent, comment, subreddit, unix, score) VALUES ("{}","{}","{}","{}","{}",{},{});""".format(parentid, commentid, parent, comment, subreddit, int(time), score)
+        transaction_bldr(sql)
     except Exception as e:
-        print("query parent error",e)
+        print('s0 insertion',str(e))
 
-def sql_insert_no_parent(parent_id,comment_id,author,subreddit,created_utc,score):
+def sql_insert_no_parent(commentid,parentid,comment,subreddit,time,score):
     try:
-        query = f'''INSERT INTO chat_reply(parent_id, comment_id, author, subreddit, created_utc, score) VALUES ("{parent_id}","{comment_id}","{author}","{subreddit}",{created_utc},{score});'''
-        transaction_bldr(query)
+        sql = """INSERT INTO chat_reply (parent_id, comment_id, comment, subreddit, unix, score) VALUES ("{}","{}","{}","{}",{},{});""".format(parentid, commentid, comment, subreddit, int(time), score)
+        transaction_bldr(sql)
     except Exception as e:
-        print("query no parent error",e)
+        print('s0 insertion',str(e))

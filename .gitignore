@@ -17,6 +17,7 @@ ipython_config.py
 
 # Dataset Large file block
 Dataset
+2023-01.db #sql database is having large data
 
 ### macOS ###
 # General
