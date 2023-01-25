@@ -2,4 +2,5 @@
 
 ## About
 
-For this Project i have used Pytorch and NLTK to create a Chatbot.
+For this Project i have used [Pytorch](https://pytorch.org/docs/stable/index.html) and [NLTK](https://www.nltk.org/) to create a Chatbot.
+
