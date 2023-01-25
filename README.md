@@ -2,4 +2,4 @@
 
 ## About
 
-Sqlite Model Integrated and Using Reddit Dataset collection
+For this Project i have used Pytorch and NLTK to create a Chatbot.
