@@ -3,7 +3,8 @@ from nlp_nltk import stem,tokenize,bag_of_words
 import json
 import datetime
 import numpy as np
-
+import torch
+from torch.utils.data import Dataset,DataLoader
 start_time = datetime.datetime.now()
 
 ######################################### MODEL IMPORT #################################################
@@ -46,7 +47,26 @@ for (patterns,tag) in Xy:
 X_train = np.asarray(X_train)
 y_train = np.asarray(y_train)
 
-# print(X_train.shape,y_train.shape)
+
+class ChatDataset(Dataset):
+    def __init__(self):
+        self.n_samples = len(X_train)
+        self.x_data = X_train
+        self.y_data = y_train
+        
+    def __len__(self):
+        return self.n_samples
+    
+    def __getitem__(self, index):
+        return self.x_data[index],self.y_data[index]
+    
+
+# Hyperparameter
+batch_size = 8
+
+dataset = ChatDataset()
+train_loader = DataLoader(dataset=dataset,batch_size=batch_size,shuffle=True,num_workers=2)
+
 
 print(f'start time : {start_time}')
 end_time = datetime.datetime.now()
