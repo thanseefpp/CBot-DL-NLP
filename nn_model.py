@@ -3,7 +3,7 @@ import torch.nn as nn
 
 class NeuralNet(nn.Module):
     """
-      Here i Have created 3 layers to Train a Neural Network Model.
+      Here I Have created 3 layers to Train a Neural Network Model.
       - You can Add more layers to get more accurate score.
     """
     def __init__(self,input_size, hidden_size,num_classes):
