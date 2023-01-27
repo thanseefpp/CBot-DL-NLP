@@ -5,7 +5,7 @@ import datetime
 import numpy as np
 import torch
 from torch.utils.data import Dataset,DataLoader
-start_time = datetime.datetime.now()
+from nn_model import NeuralNet
 
 ######################################### MODEL IMPORT #################################################
 # importing the Json Model for Training and Testing
@@ -66,9 +66,3 @@ batch_size = 8
 
 dataset = ChatDataset()
 train_loader = DataLoader(dataset=dataset,batch_size=batch_size,shuffle=True,num_workers=2)
-
-
-print(f'start time : {start_time}')
-end_time = datetime.datetime.now()
-print(f"end_time : {end_time}")
-print(f"Total Time Taken :{end_time - start_time}")
