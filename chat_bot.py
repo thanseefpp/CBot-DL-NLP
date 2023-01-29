@@ -9,7 +9,6 @@ with open('ManualDataGenerator/train_data/collection.json', 'r') as f:
     collected_data = json.load(f)
     
 #import trainedModel
-
 file_path = 'model/trained_model.pth'
 data = torch.load(file_path)
 
@@ -23,7 +22,7 @@ model_state = data['model_state']
 device  = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model   = NeuralNet(input_size, hidden_size, output_size).to(device)
 model.load_state_dict(model_state)
-model.eval()
+model.eval()#evaluating
 
 
 bot_name = "Jerry"
@@ -31,14 +30,29 @@ print("Let's Start 😊| type 'quit' to exit")
 
 while True:
     user_input = input("You : ")
-    if sentence == "quit":
+    if user_input == "quit":
+        print(f"{bot_name} : Nice to Talk to You 😊")
         break
-    sentence = tokenize(user_input)
-    x = bag_of_words(sentence,all_words)
+    user_input = tokenize(user_input)
+    x = bag_of_words(user_input,all_words)
     x = x.reshape(1,x.shape[0])
-    x = torch.from_numpy() #using numpy array
+    x = torch.from_numpy(x) #using numpy array
     
     output = model(x)
     _, predicted = torch.max(output,dim=1)
     tag = tags[predicted.item()]
+    
+    # finding the probability to get more accurate result
+    probs = torch.softmax(output,dim=1)
+    prob = probs[0][predicted.item()]
+    # if the percentage is greater than 75% then it would give a matching answers.
+    if prob.item() > 0.75:
+        for intent in collected_data['intents']:
+            if tag == intent['tag']:
+                # taking random response from the collection
+                print(f"{bot_name} : {random.choice(intent['responses'])}")
+    else:
+        print(f"{bot_name} : I don't Understand Can you repeat...")
+                
+    
 
