@@ -79,6 +79,23 @@
         "Why did the hipster burn his mouth? He drank the coffee before it was cool.",
         "What did the buffalo say when his son left for college? Bison."
       ]
+    },
+    {
+      "tag": "question",
+      "patterns": [
+        "who",
+        "who are you",
+        "what is your name?",
+        "what can i call you",
+        "how do i know your name?",
+        "your name?"
+      ],
+      "responses": [
+        "I'm Jerry",
+        "Thank you for asking me, I'm Jerry",
+        "I'm a Chatbot Named Jerry, Intrusting Question",
+        "My master Thanseef Build me, He call me Jerry 😊"
+      ]
     }
   ]
 }
