@@ -3,6 +3,9 @@ import json
 import random
 from nn_model import NeuralNet
 from nlp_nltk import bag_of_words,tokenize
+import pyttsx3
+
+engine = pyttsx3.init()
 
 # importing the Json Model for Training and Testing
 with open('ManualDataGenerator/train_data/collection.json', 'r') as f:
@@ -31,7 +34,10 @@ print("Let's Start 😊| type 'quit' to exit")
 while True:
     user_input = input("You : ")
     if user_input == "quit":
-        print(f"{bot_name} : Nice to Talk to You 😊")
+        response = "Nice to Talk to You 😊"
+        print(f"{bot_name} : {response}")
+        engine.say(response)
+        engine.runAndWait()
         break
     user_input = tokenize(user_input)
     x = bag_of_words(user_input,all_words)
@@ -50,9 +56,15 @@ while True:
         for intent in collected_data['intents']:
             if tag == intent['tag']:
                 # taking random response from the collection
-                print(f"{bot_name} : {random.choice(intent['responses'])}")
+                response = random.choice(intent['responses'])
+                print(f"{bot_name} : {response}")
+                engine.say(response)
+                engine.runAndWait()
     else:
-        print(f"{bot_name} : I don't Understand Can you repeat...")
+        response = "I don't Understand Can you repeat..."
+        print(f"{bot_name} : {response}")
+        engine.say(response)
+        engine.runAndWait()
                 
     
 
