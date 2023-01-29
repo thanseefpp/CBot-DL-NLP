@@ -1,3 +1,4 @@
+###################################### IMPORTING LIBRARIES ############################################
 from fastapi import FastAPI
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
@@ -7,16 +8,9 @@ import random
 from nn_model import NeuralNet
 from nlp_nltk import bag_of_words,tokenize
 
+###################################### FASTAPI SETTING UP #############################################
+
 app = FastAPI()
-
-# importing the Json Model for Training and Testing
-with open('ManualDataGenerator/train_data/collection.json', 'r') as f:
-    collected_data = json.load(f)
-    
-#import trainedModel
-file_path = 'model/trained_model.pth'
-data = torch.load(file_path)
-
 origins = ["*"]
 
 app.add_middleware(
@@ -29,6 +23,16 @@ app.add_middleware(
 
 class model_input(BaseModel):
     ChatInputText : str
+    
+###################################### IMPORTING AND TRAINING MODEL ####################################
+
+# importing the Json Model for Training and Testing
+with open('ManualDataGenerator/train_data/collection.json', 'r') as f:
+    collected_data = json.load(f)
+    
+#import trainedModel
+file_path = 'model/trained_model.pth'
+data = torch.load(file_path)
 
 input_size  = data['input_size']
 output_size = data['output_size']
@@ -41,6 +45,8 @@ device  = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model   = NeuralNet(input_size, hidden_size, output_size).to(device)
 model.load_state_dict(model_state)
 model.eval()#evaluating
+
+###################################### API AND RESPONSES ###############################################
 
 @app.get("/")
 def home_page():
@@ -55,8 +61,7 @@ def chat_bot_interaction(input_parameters : model_input):
     user_input = input_dictionary['ChatInputText']
     if user_input == "quit":
         response = "Nice to Talk to You 😊"
-        return {"bot_name" : bot_name,
-                "response" : response}
+        return {"bot_name" : bot_name,"response" : response}
     user_input = tokenize(user_input)
     x = bag_of_words(user_input,all_words)
     x = x.reshape(1,x.shape[0])
@@ -75,10 +80,7 @@ def chat_bot_interaction(input_parameters : model_input):
             if tag == intent['tag']:
                 # taking random response from the collection
                 response = random.choice(intent['responses'])
-                # print(f"{bot_name} : {response}")
                 return {"bot_name" : bot_name,"response" : response}
     else:
         response = "I don't Understand Can you repeat..."
         return {"bot_name" : bot_name,"response" : response}
-        # engine.say(response)
-        # engine.runAndWait()
